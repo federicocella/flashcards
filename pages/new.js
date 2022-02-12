@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { FileDrop } from 'react-file-drop'
 import { useRouter } from 'next/router';
 import Button from '@/components/ui/Button';
+import { PoplarSelect } from '@/components/ui/poplar-ui';
 
 export default function App() {
     const { userLoaded, user, session, userDetails } = useUser();
-    const [projectname, setProjectname] = useState('')
+    const [projectname, setDeckname] = useState('')
     const [submitting, setSubmitting] = useState(false);
     const [filesToUpload, setFiles] = useState([]);
     const router = useRouter();
@@ -16,19 +17,16 @@ export default function App() {
         if (userLoaded && !user) router.replace('/signin');
     }, [userLoaded, user]);
 
-    async function createProject(files) {
+    async function createDeck(files) {
         setSubmitting(true)
-        const uploadedImagePaths = await uploadImages(files)
         const name = projectname || files[0].name
-        const newProject = {
-            user_id: user.id,
+        const newDeck = {
             name: name,
-            pictures: uploadedImagePaths,
         }
-        const { data, error } = await supabase.from('projects').insert(newProject)
+        const { data, error } = await supabase.from('decks').insert(newDeck)
 
         if (!error) {
-            router.push('/project/' + data[0].id)
+            router.push('/deck/' + data[0].id)
             setSubmitting(false);
         } else {
             console.log('Error', error)
@@ -69,7 +67,7 @@ export default function App() {
     }
 
     const handleChange = e => {
-        setProjectname(e.target.value)
+        setDeckname(e.target.value)
     }
 
     if (!user) {
@@ -82,28 +80,13 @@ export default function App() {
                         <input id='projectname' autoFocus={true} value={projectname} onChange={handleChange} placeholder='New project' type="text" name="nome"
                             className='font-bold text-3xl my-5 w-full focus:ring-0 focus:outline-none placeholder-gray-300 bg-transparent' />
                     </label>
-                    <FileDrop onDrop={(files, e) => {
-                        setFiles(files)
-                        setProjectname(projectname || e.target.files[0].name.split('.')[0])
-                    }}>
-                        <div id='droppable'
-                            className='py-36 flex flex-col items-center border-2 border-gray-400 border-opacity-50 border-dashed rounded-xl hover:bg-gray-100'>
-                            <label className='text-center space-y-2' for="demoPictures">
-                                <div className="mt-4">Drag and drop images here</div>
-                                <div className="text-sm">OR</div>
-                                <Button variant="slim" type='neutral'>Select images</Button>
-                            </label>
-                            <input hidden name="filepick" type="file"
-                                id="demoPictures" name="demoPictures"
-                                accept="image/png, image/jpeg"
-                                multiple={true}
-                                onChange={e => {
-                                    setFiles(e.target.files)
-                                    setProjectname(projectname || e.target.files[0].name.split('.')[0])
-                                }} />
-                        </div>
-                    </FileDrop>
-                    <Button variant="slim" onClick={(e) => createProject(filesToUpload)}>{submitting ? (
+                    <PoplarSelect options={[
+                        { value: 'chocolate', label: 'Chocolate' },
+                        { value: 'strawberry', label: 'Strawberry' },
+                        { value: 'vanilla', label: 'Vanilla' }
+                    ]}>
+                    </PoplarSelect>
+                    <Button variant="slim" onClick={(e) => createDeck(filesToUpload)}>{submitting ? (
                         <div>
                             Creating... {' '}
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,7 +96,7 @@ export default function App() {
 
                         </div>
                     ) : (
-                        <div>Create Project</div>
+                        <div>Create Deck</div>
                     )}</Button>
                 </form>
             </div>

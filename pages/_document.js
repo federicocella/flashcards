@@ -26,6 +26,7 @@ class MyDocument extends Document {
         <body className="loading">
           <Main />
           <NextScript />
+          <div id="modal-root"></div>
         </body>
       </Html>
     );

@@ -126,7 +126,7 @@ export default function Viewer(props) {
                         }
                     }}>{!playing ? 'Play' : 'Stop'}</button>
                 </div>}
-                <div className="absolute text-gray-500 opacity-60 text-xs bottom-2 right-4">Powered by RotoSnap</div>
+                <div className="absolute text-gray-500 opacity-60 text-xs bottom-2 right-4">Powered by Flashcards</div>
             </div>
         </div>
     </div >)

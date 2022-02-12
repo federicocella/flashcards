@@ -8,10 +8,10 @@ import Button from '@/components/ui/Button';
 import Link from 'next/link';
 
 
-export default function ProjectPage() {
+export default function DeckPage() {
 
     const { userLoaded, user, session, userDetails } = useUser();
-    const [project, setProject] = useState(null);
+    const [project, setDeck] = useState(null);
     const [paths, setPaths] = useState([])
     const [loading, setLoading] = useState(false)
     const [debug, setDebug] = useState(false)
@@ -27,24 +27,24 @@ export default function ProjectPage() {
             console.error('no user logged in')
             if (!user) router.replace('/');
         } else {
-            getProject()
+            getDeck()
         }
     }, [user])
 
-    async function getProject() {
+    async function getDeck() {
         setLoading(true);
         console.log('getting project', id)
-        let { data, error, status } = await supabase.from('projects').select('id, user_id, name, pictures, mode').match({ id: id }).single()
+        let { data, error, status } = await supabase.from('flashcards').select('id, deck_id, front, back').match({ deck_id: id })
         console.log('got project', data)
         if (Array.isArray(data)) {
             console.log('received an array', data)
-            data = proj[0]
+            data = data[0]
         }
         console.log('data', data)
         if (error) console.error('error', error.message)
         if (data && !error) {
             setMode(data.mode)
-            setProject(data)
+            setDeck(data)
             getPublicUrl(data)
         }
         setLoading(false);
@@ -52,20 +52,11 @@ export default function ProjectPage() {
 
     async function getPublicUrl(proj) {
 
-        if (proj) {
-            //let firstURL = await downloadImage(proj.pictures[0]);
-            const baseURL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/`
-
-            //const baseURL = firstURL.substring(0, firstURL.lastIndexOf("/") + 1);
-            const _paths = proj.pictures.map(p => baseURL + p)
-            console.log('pictures', _paths)
-            setPaths(_paths)
-        }
     }
 
-    async function saveProject() {
+    async function saveDeck() {
         setLoading(true);
-        const { data, error } = await supabase.from('projects').update({
+        const { data, error } = await supabase.from('decks').update({
             name: project.name,
             pictures: project.pictures,
             mode: mode
@@ -73,12 +64,12 @@ export default function ProjectPage() {
         setLoading(false);
     }
 
-    async function deleteProject() {
-        if (confirm('Are you sure you want to delete the project?')) { alert('Project deleted') } else { return }
+    async function deleteDeck() {
+        if (confirm('Are you sure you want to delete the project?')) { alert('Deck deleted') } else { return }
         const toRemove = project.pictures
         const { data, error } = await supabase.storage.from('avatars').remove(toRemove)
         if (!error) {
-            const { data, error } = await supabase.from('projects').delete().match({ id: id })
+            const { data, error } = await supabase.from('decks').delete().match({ id: id })
         }
         router.push('/dashboard')
     }
@@ -92,15 +83,14 @@ export default function ProjectPage() {
                     <div className='fixed flex items-center top-0 w-full text-md px-4 pl-8 h-16 bg-white border-b border-gray-200 font-bold'>
                         <Link href="/">
                             <a className="text-xl font-extrabold text-accents-0" aria-label="Logo">
-                                RotoSnap
+                                Flashcards
                             </a>
                         </Link>
                         <div className="ml-8 flex-grow ">{project ? project.name : ''}</div>
-                        <div className="mr-2"><Button variant="slim" className='text-lefttext-accents-0' onClick={() => saveProject()}>Update</Button></div>
+                        <div className="mr-2"><Button variant="slim" className='text-lefttext-accents-0' onClick={() => saveDeck()}>Update</Button></div>
                     </div>
                     <div className='flex h-screen'>
-                        <div className='flex-grow flex items-center bg-gray-200'>{paths && paths.length ?
-                            <Viewer className='align-top' mode={mode} images={paths} debug={debug} embed={!shadows}></Viewer>
+                        <div className='flex-grow flex items-center bg-gray-200'>{project ? project.front
                             : 'This product doesn\'t contain any images'}
                         </div>
                         <div className='overflow-scroll w-80 bg-white p-6 drop-shadow-h-3'>
@@ -142,11 +132,10 @@ export default function ProjectPage() {
                             <div className='my-8'>
                                 <label className='mb-4 text-lg font-bold block'>Images</label>
                                 <div className="rounded max-h-48 overflow-scroll border border-gray-200 divide-y divide-gray-200">
-                                    {project && project.pictures.map((p, i) => <li className="text-sm list-none p-1 px-4" key={i}>{i} - {p}</li>)}
                                 </div>
                             </div>
                             <div className='my-8'>
-                                <Button type="negative" variant="slim" className='text-red my-2 w-full' onClick={() => deleteProject()}>Delete Project</Button>
+                                <Button type="negative" variant="slim" className='text-red my-2 w-full' onClick={() => deleteDeck()}>Delete Deck</Button>
                             </div>
                         </div>
                     </div>

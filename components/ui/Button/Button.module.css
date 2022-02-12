@@ -19,7 +19,7 @@
 }
 
 .slim {
-  @apply py-2 transform-none normal-case;
+  @apply h-10 transform-none normal-case;
 }
 .negative {
   @apply bg-white text-red border border-gray-300;
@@ -28,10 +28,10 @@
   @apply border-gray-400 bg-white text-red;
 }
 .neutral {
-  @apply bg-white text-base border border-gray-300;
+  @apply bg-white text-black border border-gray-300;
 }
 .neutral:hover {
-  @apply border-gray-400 bg-white text-base;
+  @apply border-gray-400 bg-white text-black;
 }
 
 .disabled, .disabled:hover {

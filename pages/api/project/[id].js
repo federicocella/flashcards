@@ -3,7 +3,7 @@ import { supabase } from '@/utils/supabase-client'
 export default async function handler(req, res) {
 
     const { id } = req.query
-    const { data, error, status } = await supabase.from('projects').select('id, name, pictures').eq('id', id).single()
+    const { data, error, status } = await supabase.from('decks').select('id, name, pictures').eq('id', id).single()
     const baseURL = await getPublicUrl(data)
 
     const project = {

@@ -13,7 +13,7 @@ export default function Footer() {
               <span className="rounded-full border border-gray-700 mr-2">
                 <Logo />
               </span>
-              <span>RotoSnap</span>
+              <span>Flashcards</span>
             </a>
           </Link>
         </div>
@@ -69,7 +69,7 @@ export default function Footer() {
       </div>
       <div className="py-12 flex flex-col md:flex-row justify-between items-center space-y-4 bg-primary-2">
         <div>
-          <span>&copy; 2022 RotoSnap, Inc. All rights reserved.</span>
+          <span>&copy; 2022 Flashcards, Inc. All rights reserved.</span>
         </div>
       </div>
     </footer>

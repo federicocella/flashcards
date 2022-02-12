@@ -63,40 +63,6 @@ export default function LandingPage() {
           </g>
         </svg>
       </div>
-      <section className="tx-lg border-b py-8 bg-white">
-        <div className="container max-w-5xl mx-auto m-8">
-          <h1 className="w-full my-2 text-4xl font-bold leading-tight text-center text-black">Drop some pictures to try it live!</h1>
-          <div className="mt-8 flex flex-col items-center justify-center">
-            {pictures.length > 0 ? <Viewer images={pictures} /> :
-              <div onDrop={e => e.preventDefault()} className="mx-auto text-center w-full my-0 py-5 rounded-t text-black">
-                <form>
-                  <FileDrop onDrop={(files, e) => { loadFiles(files) }}>
-                    <div id='droppable'
-                      className='py-20 m-5 border-2 border-gray-300 bg-transparent border-dashed rounded-xl hover:bg-gray-100'>
-                      <label className='space-y-2' for="demoPictures">
-                        <div className="mt-4">Drag and drop images here</div>
-                        <div className="text-sm">OR</div>
-                        <Button variant="slim" type='neutral'>Select images</Button>
-                      </label>
-                      <input hidden type="file"
-                        id="demoPictures" name="demoPictures"
-                        accept="image/png, image/jpeg"
-                        multiple={true}
-                        onChange={e => {
-                          console.log(e.target.files)
-                          loadFiles(e.target.files)
-                        }}>
-
-                      </input>
-
-                    </div>
-                  </FileDrop>
-                </form>
-              </div>
-            }
-          </div>
-        </div>
-      </section>
     </div >
     <section className="tx-lg bg-white border-b py-8">
       <div className="container max-w-5xl mx-auto m-8">
@@ -128,7 +94,7 @@ export default function LandingPage() {
           <div className="w-full sm:w-1/2 p-6 mt-6 flex">
             <div className="align-middle">
               <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">A Better Way</h3>
-              <p className="text-lg text-gray-600 mb-8">RotoSnap offers a plug-and-play solution to embed 360 views of your products – or anything else for that matter – on your website.<br /><br />
+              <p className="text-lg text-gray-600 mb-8">Flashcards offers a plug-and-play solution to embed 360 views of your products – or anything else for that matter – on your website.<br /><br />
               </p>
 
             </div>
@@ -138,7 +104,7 @@ export default function LandingPage() {
         <div className="flex flex-wrap">
           <div className="w-5/6 sm:w-1/2 p-6">
             <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3 mt-6">Upload and embed. Done.</h3>
-            <p className="text-lg text-gray-600 mb-8">RotoSnap takes care of all the heavy lifting surrounding file uploads.The widget hooks into an input with class of simple-file-upload and replaces it with a dropzone.The user drops a file and the file is automatically uploaded to cloud storage via a direct upload.Files are served via a CDN which is imperitive in today's modern megabyte-sized website world. <br /><br />
+            <p className="text-lg text-gray-600 mb-8">Flashcards takes care of all the heavy lifting surrounding file uploads.The widget hooks into an input with class of simple-file-upload and replaces it with a dropzone.The user drops a file and the file is automatically uploaded to cloud storage via a direct upload.Files are served via a CDN which is imperitive in today's modern megabyte-sized website world. <br /><br />
             </p></div>
           <div className="w-full sm:w-1/2 p-6">
             <img className="w-5/6 sm:h-64 mx-auto mt-6" src="https://d33wubrfki0l68.cloudfront.net/9475b01d7e8f54ea97bf17911c0882e6a89c32ee/ff7af/assets/server.svg" />
@@ -152,7 +118,7 @@ export default function LandingPage() {
           <div className="w-full sm:w-1/2 p-6 mt-6">
             <div className="align-middle">
               <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">Will it work for me?</h3>
-              <p className="text-lg text-gray-600 mb-8">Yes! It can work with all kinds of languages and backends. RotoSnap can be embedded into any HTML using an iframe or via a javascript snippet or React component.<br /><br />
+              <p className="text-lg text-gray-600 mb-8">Yes! It can work with all kinds of languages and backends. Flashcards can be embedded into any HTML using an iframe or via a javascript snippet or React component.<br /><br />
               </p></div>
           </div>
         </div>

@@ -1,7 +1,10 @@
 .root {
-  @apply bg-white py-2 px-3 w-full appearance-none transition duration-150 ease-in-out border border-accents-3;
+  @apply bg-white h-10 rounded py-2 px-3 w-full appearance-none transition duration-150 ease-in-out border border-gray-300;
 }
 
 .root:focus {
-  @apply outline-none;
+  @apply outline-none border-primary ring-0;
+}
+.root:active {
+  @apply outline-none border-primary ring-0;
 }

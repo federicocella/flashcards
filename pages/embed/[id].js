@@ -4,20 +4,20 @@ import { useUser } from '@/utils/useUser';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase-client'
 
-export default function ProjectPage() {
-    let [project, setProject] = useState(null);
+export default function DeckPage() {
+    let [project, setDeck] = useState(null);
     const router = useRouter()
     const { id } = router.query
 
     useEffect(() => {
-        getProject()
+        getDeck()
     }, [id])
 
-    async function getProject() {
-        const { data, error, status } = await supabase.from('projects').select('id, name, pictures, mode').eq('id', id).single()
+    async function getDeck() {
+        const { data, error, status } = await supabase.from('decks').select('id, name, pictures, mode').eq('id', id).single()
         if (error) throw error
         console.log(data)
-        setProject(data)
+        setDeck(data)
     }
 
     const [paths, setPaths] = useState([])

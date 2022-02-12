@@ -4,31 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import { PoplarModal } from '@/components/ui/poplar-ui';
 
-export const Project = (props) => {
-    const url = (props.proj ? props.proj.pictures[0] : null);
+export const Deck = (props) => {
     const [profile, setProfile] = useState('')
     const [hover, setHover] = useState(false);
-
-    useEffect(() => {
-        if (url && !props.empty) downloadImage(url)
-    }, [])
-
-    async function downloadImage(path) {
-        try {
-            //const { data, error } = await supabase.storage.from('avatars').getPublicUrl(path)
-            //console.log('downloaded data', data)
-            //if (error) {
-            //    throw error
-            //}
-            //const url = URL.createObjectURL(data)
-            //setProfile(data.publicURL)
-            setProfile(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${path}`)
-        }
-        catch (error) {
-            console.log('Error downloading image: ', error.message)
-        }
-    }
 
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef);
@@ -65,7 +46,7 @@ export const Project = (props) => {
                 </div>}
             {props.selected ?
                 <div ref={wrapperRef} className='absolute right-3 top-3 rounded-lg filter drop-shadow-h-2 z-50 bg-white py-2'>
-                    <Link href={'/project/' + props.proj.id}><a>
+                    <Link href={'/deck/' + props.proj.id}><a>
                         <div className='text-sm py-4 w-32 pl-4 hover:bg-accents-8 cursor-pointer'>
                             Edit
                         </div></a>
@@ -76,7 +57,7 @@ export const Project = (props) => {
                     </div>
                 </div>
                 : ''}
-            <Link href={props.proj ? "/project/" + props.proj.id : "/"}>
+            <Link href={props.proj ? "/deck/" + props.proj.id : "/"}>
                 <a>
                     <div className="relative w-full h-40 rounded-t-lg overflow-hidden z-30 bg-gray-100">
                         <div className={"t-0 absolute w-full h-full bg-black-fade z-20 transition duration-300 animate-none ease-in-out " + (hover ? "bg-opacity-20" : "opacity-0")}></div>
@@ -88,7 +69,7 @@ export const Project = (props) => {
                         />}
                     </div>
                     <div className='mt-3 px-4 text-sm font-medium break-words mb-1 truncate'>{props.empty ? "..." : props.proj.name.split('.')[0]}</div>
-                    <div className='mb-3 px-4 text-xs text-gray-400'>{props.proj ? props.proj.pictures.length + " pictures" : "..."}</div>
+                    <div className='mb-3 px-4 text-xs text-gray-400'>No flashcards</div>
                 </a>
             </Link>
         </div >
@@ -97,38 +78,52 @@ export const Project = (props) => {
 
 
 export default function Dashboard() {
-    const [projects, setProjects] = useState([])
+    const [decks, setDecks] = useState([])
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(null);
     const router = useRouter();
     const { user, signIn } = useUser();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newDeckName, setNewDeckName] = useState("");
 
     useEffect(() => {
-        allProjects()
+        allDecks()
         if (!user) router.replace('/signin');
     }, [user])
 
 
-    async function allProjects() {
+    async function allDecks() {
         setLoading(true)
         if (!user) return []
-        const { data, error, status } = await supabase.from('projects').select('id, user_id, name, pictures').eq('user_id', user.id)
-        console.log('all projects ', data)
+        const { data, error, status } = await supabase.from('decks').select('id, name');
+        console.log('all decks ', data)
         if (error) throw error
         setLoading(false)
-        setProjects(data)
+        setDecks(data)
     }
 
-    async function deleteProject(i) {
-        const picsToRemove = projects[i].pictures
-        const { data, error } = await supabase.storage.from('avatars').remove(picsToRemove)
+    async function deleteDeck(i) {
+
+        const { data, error } = await supabase.from('decks').delete().match({ id: decks[i].id })
+        console.log('deleted project ', data, error)
+        const updatedDecks = decks.filter((p, j) => { return (i !== j) })
+        setDecks(updatedDecks)
+    }
+
+    async function createDeck(name) {
+        setLoading(true)
+        const newDeck = {
+            name: name,
+        }
+        const { data, error } = await supabase.from('decks').insert(newDeck)
 
         if (!error) {
-            const { data, error } = await supabase.from('projects').delete().match({ id: projects[i].id })
-            console.log('deleted project ', data, error)
+            router.push('/deck/' + data[0].id)
+            setLoading(false);
+        } else {
+            console.log('Error', error)
+            setLoading(false)
         }
-        const updatedProjects = projects.filter((p, j) => { return (i !== j) })
-        setProjects(updatedProjects)
     }
 
     const skeleton = new Array(6).fill(" ");
@@ -139,10 +134,10 @@ export default function Dashboard() {
         <div className='max-w-8xl mx-auto px-8 pt-8 mb-32'>
             <div className='flex items-center mb-8'>
                 <div className='flex-grow'>
-                    <h2 className='text-2xl font-bold mb-0.5'>All projects</h2>
+                    <h2 className='text-2xl font-bold mb-0.5'>All decks</h2>
                 </div>
 
-                <Link href='/new'>
+                {/*<Link href='/new'>
                     <a>
                         <Button
                             variant="slim"
@@ -151,17 +146,42 @@ export default function Dashboard() {
                             New
                         </Button>
                     </a>
-                </Link>
+    </Link>*/}
+                <Button
+                    variant="slim"
+                    loading={loading}
+                    onClick={() => { setIsModalOpen(true) }}
+                >
+                    New
+                </Button>
+                <PoplarModal title="New deck" onClose={() => setIsModalOpen(false)}
+                    show={isModalOpen}>
+                    <div className="mb-2 font-medium">Deck name</div>
+                    <Input placeholder="Enter deck name" onChange={(value) => setNewDeckName(value)}></Input>
+                    <div className="flex space-x-2 justify-end">
+                        <Button
+                            variant="slim"
+                            type="neutral"
+                            loading={loading}
+                            onClick={() => { setIsModalOpen(false) }}
+                        >Cancel</Button>
+                        <Button
+                            variant="slim"
+                            loading={loading}
+                            onClick={() => { createDeck(newDeckName) }}
+                        >Create</Button>
+                    </div>
+                </PoplarModal>
             </div>
             <div className='flex gap-8 flex-wrap mb-12'>
-                {loading ? skeleton.map((s, i) => <Project empty key={i} />) :
-                    projects.map((p, i) => <Project proj={p} key={p.id} index={i} selected={i == selected}
+                {loading ? skeleton.map((s, i) => <Deck empty key={i} />) :
+                    decks.map((p, i) => <Deck proj={p} key={p.id} index={i} selected={i == selected}
                         onMoreOptions={() => setSelected(i)}
                         onClickOutside={() => setSelected(null)}
-                        onDelete={() => deleteProject(i)} />)}
-                {!loading && !projects.length &&
+                        onDelete={() => deleteDeck(i)} />)}
+                {!loading && !decks.length &&
                     <div className='w-full my-32 text-accents-4 text-center font-medium'>
-                        <div className='mb-6'>There are no projects yet</div>
+                        <div className='mb-6'>There are no decks yet</div>
                         <Link href='/new'>
                             <a>
                                 <Button

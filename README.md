@@ -1,4 +1,4 @@
-# RotoSnap
+# Flashcards
 
 The all-in-one solution for creating and embedding 360 degrees product views.
 
@@ -17,7 +17,7 @@ The all-in-one solution for creating and embedding 360 degrees product views.
 - https://rotosnap.com/
 
 [![Screenshot of demo](./public/home.png)](https://rotosnap.com/)
-[![Screenshot of demo](./public/projects.png)](https://rotosnap.com/)
+[![Screenshot of demo](./public/decks.png)](https://rotosnap.com/)
 [![Screenshot of demo](./public/product.png)](https://rotosnap.com/)
 
 ## Architecture
