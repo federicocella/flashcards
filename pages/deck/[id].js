@@ -5,19 +5,20 @@ import { useUser } from '@/utils/useUser';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase-client';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import Link from 'next/link';
+import { PoplarModal, PoplarLabel } from '@/components/ui/poplar-ui';
 
 
 export default function DeckPage() {
 
     const { userLoaded, user, session, userDetails } = useUser();
     const [deck, setDeck] = useState(null);
-    const [paths, setPaths] = useState([])
+    const [flashcards, setFlashcards] = useState(null);
     const [loading, setLoading] = useState(false)
-    const [debug, setDebug] = useState(false)
-    const [shadows, setShadows] = useState(false)
-    const [mode, setMode] = useState('autoplay')
-    const [copied, setCopied] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newFlashcard, setNewFlashcard] = useState({});
+    const [mode, setMode] = useState("edit");
     const router = useRouter()
     const { id } = router.query
 
@@ -27,75 +28,190 @@ export default function DeckPage() {
             console.error('no user logged in')
             if (!user) router.replace('/');
         } else {
-            getDeck()
+            getFlashcards()
         }
     }, [user])
 
-    async function getDeck() {
+    async function getFlashcards() {
         setLoading(true);
-        console.log('getting deck', id)
-        let { data, error, status } = await supabase.from('flashcards').select('id, deck_id, front, back').match({ deck_id: id })
-        console.log('got deck', data)
-        if (Array.isArray(data)) {
-            console.log('received an array', data)
-            data = data[0]
-        }
-        console.log('data', data)
+        let { data, error, status } = await supabase.from('flashcards').select('id, deck_id, front, back, learned').match({ deck_id: id })
         if (error) console.error('error', error.message)
+
         if (data && !error) {
-            setMode(data.mode)
-            setDeck(data)
-            getPublicUrl(data)
+            setFlashcards(data)
+            getDeck();
         }
         setLoading(false);
     }
-
-    async function getPublicUrl(proj) {
-
+    async function getDeck() {
+        let { data, error, status } = await supabase.from('decks').select('id, name').eq("id", id).single();
+        if (error) console.error(error.message)
+        console.log("deck data:", data);
+        if (data && !error) {
+            setDeck(data);
+        }
     }
 
-    async function saveDeck() {
+    async function saveFlashcards() {
         setLoading(true);
-        const { data, error } = await supabase.from('decks').update({
-            name: deck.name,
-            pictures: deck.pictures,
+        const { data, error } = await supabase.from('flashcards').update({
+            name: flashcards.name,
+            pictures: flashcards.pictures,
             mode: mode
         }).match({ id: id })
         setLoading(false);
     }
 
-    async function deleteDeck() {
-        if (confirm('Are you sure you want to delete the deck?')) { alert('Deck deleted') } else { return }
-        const toRemove = deck.pictures
-        const { data, error } = await supabase.storage.from('avatars').remove(toRemove)
+    async function deleteFlashcards() {
+        if (confirm('Are you sure you want to delete the flashcards?')) { alert('Flashcards deleted') } else { return }
+        const { data, error } = await supabase.from('flashcards').delete().match({ id: id })
         if (!error) {
-            const { data, error } = await supabase.from('decks').delete().match({ id: id })
+            router.push('/dashboard')
         }
-        router.push('/dashboard')
+
+    }
+
+    async function createFlashcard() {
+        setLoading(true)
+        const newCard = {
+            front: newFlashcard.front,
+            back: newFlashcard.back,
+            deck_id: id,
+            learned: false
+        }
+        const { data, error } = await supabase.from('flashcards').insert(newCard)
+
+        if (!error) {
+            //router.push('/flashcards/' + data[0].id)
+            setLoading(false);
+            getFlashcards();
+            setIsModalOpen(false);
+        } else {
+            console.log('Error', error)
+            setLoading(false)
+        }
     }
 
     const iframeCode = `<iframe width="500" height="500" src="${process.env.NEXT_PUBLIC_ROOT_URL}/embed/${id}" style="border: none;"></iframe>`
 
+    switch (mode) {
+        case 'review':
+            return (
+                <div>
+                    {loading ? <div className='w-16 pt-16 mx-auto'><LoadingDots /></div> :
+                        <div className='max-w-screen-md m-auto my-8 min-h-screen'>
+                            <div className='flex items-center mb-4'>
+                                <div className='text-lg font-semibold flex-grow'>{deck.name}</div>
+                                <div>
+                                    <Button variant='slim' onClick={() => { setMode('review') }}>Review</Button>
+                                </div>
+                            </div>
+                            <Review flashcards={flashcards.filter(el => !el.learned)} />
+                        </div>
+                    }
+                </div >
+            )
+
+        default:
+            return (
+                <div>
+                    {loading ? <div className='w-16 pt-16 mx-auto'><LoadingDots /></div> :
+                        <div>
+                            <div className='max-w-screen-md m-auto my-8 min-h-screen'>
+                                <div className='flex items-center mb-4'>
+                                    <div className='text-lg font-semibold flex-grow'>{deck ? deck.name : 'Untitled'}</div>
+                                    <div>
+                                        <Button variant='slim' onClick={() => { setMode('review') }}>Review</Button>
+                                    </div>
+                                </div>
+                                <div className='space-y-2'>{flashcards ?
+                                    flashcards.map((flashcard, i) => (
+                                        <div>
+                                            <div className="flex bg-white py-4 px-6 rounded-lg filter drop-shadow-sm">
+                                                <div className='flex-grow'>
+                                                    {flashcard.front}
+                                                </div>
+                                                <div className=''>
+                                                    {flashcard.back}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                    : 'This deck doesn\'t contain any flashcards'}
+                                    <div onClick={() => { setIsModalOpen(true) }} className="cursor-pointer flex justify-center hover:bg-gray-100 py-4 px-6 rounded-lg border-2 border-dashed border-gray-200">
+                                        Add card
+                                    </div>
+                                    <PoplarModal show={isModalOpen} title="New card" onClose={() => setIsModalOpen(false)}>
+                                        <div>
+                                            <PoplarLabel>Front</PoplarLabel>
+                                            <Input placeholder="Front" onChange={(value) => setNewFlashcard({
+                                                front: value,
+                                                back: newFlashcard.back,
+                                                deck_id: flashcards.deck_id,
+                                            })}></Input>
+                                        </div>
+                                        <div>
+                                            <PoplarLabel>Back</PoplarLabel>
+                                            <Input placeholder="Back" onChange={(value) => setNewFlashcard({
+                                                front: newFlashcard.front,
+                                                back: value,
+                                                deck_id: flashcards.deck_id,
+                                            })}></Input>
+                                        </div>
+                                        <div className="flex space-x-2 justify-end">
+                                            <Button
+                                                variant="slim"
+                                                type="neutral"
+                                                loading={loading}
+                                                onClick={() => { setIsModalOpen(false) }}
+                                            >Cancel</Button>
+                                            <Button
+                                                variant="slim"
+                                                loading={loading}
+                                                onClick={() => { createFlashcard(newFlashcard) }}
+                                            >Create</Button>
+                                        </div>
+                                    </PoplarModal>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div >
+            )
+    }
+}
+
+function Review({ flashcards }) {
+    let [flipped, setFlipped] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    async function updateFlashcard(card, i, arr) {
+        const { data, error } = await supabase.from('flashcards').update({
+            front: card.front,
+            back: card.back,
+            deck_id: card.deck_id,
+            learned: true
+        }).match({ id: card.id })
+        if (data & !error) {
+            arr[i].learned = true;
+        }
+    }
+
     return (
         <div>
-            {loading ? <div className='w-16 pt-16 mx-auto'><LoadingDots /></div> :
-                <div>
-                    <div className='fixed flex items-center top-0 w-full text-md px-4 pl-8 h-16 bg-white border-b border-gray-200 font-bold'>
-                        <Link href="/">
-                            <a className="text-xl font-extrabold text-accents-0" aria-label="Logo">
-                                Flashcards
-                            </a>
-                        </Link>
-                        <div className="ml-8 flex-grow ">{deck ? deck.name : ''}</div>
-                        <div className="mr-2"><Button variant="slim" className='text-lefttext-accents-0' onClick={() => saveDeck()}>Update</Button></div>
-                    </div>
-                    <div className='flex h-screen'>
-                        <div className='flex-grow flex items-center'>{deck ? deck.front
-                            : 'This product doesn\'t contain any images'}
-                        </div>
-                    </div>
-                </div>
-            }
+            <div className="bg-white w-full h-96 flex flex-col items-center justify-center rounded-xl filter drop-shadow-sm divide-y">
+                <div className="py-4 font-bold text-4xl">{flashcards[currentIndex].front}</div>
+                {flipped ? <div className="py-4 font-medium text-2xl">{flashcards[currentIndex].back}</div> : ''}
+            </div>
+            <div className="mt-4 flex justify-center space-x-2">
+                <Button variant="slim" type="neutral">←</Button>
+                <Button variant="slim" onClick={() => { setFlipped(true) }}>Flip</Button>
+                <Button variant="slim" disabled={flashcards[currentIndex].learned} type="neutral" onClick={() => { updateFlashcard(flashcards[currentIndex], currentIndex, flashcards) }}>Mark as learned</Button>
+                <Button variant="slim" type="neutral" onClick={() => {
+                    setCurrentIndex(Math.floor(Math.random() * flashcards.length))
+                    setFlipped(false)
+                }}>→</Button>
+            </div>
         </div >
     )
 }
