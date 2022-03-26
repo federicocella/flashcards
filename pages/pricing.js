@@ -7,7 +7,7 @@ export default function PricingPage({ products }) {
 }
 
 export async function getStaticProps() {
-  const products = await getActiveProductsWithPrices();
+  const products // = await getActiveProductsWithPrices();
 
   return {
     props: {
