@@ -17,16 +17,13 @@ const Navbar = () => {
           <div className="flex flex-1 items-center">
             <Link href="/">
               <a className="text-xl font-extrabold mr-4 text-accents-0" aria-label="Logo">
-                Flashcards
+                Flashdex
               </a>
             </Link>
             <nav className="space-x-2 ml-6 hidden lg:block">
               {user ? <Link href="/dashboard">
                 <a className={s.link}>Dashboard</a>
               </Link> : ''}
-              <Link href="/documentation">
-                <a className={s.link}>Documentation</a>
-              </Link>
               {!user ? <Link href="/pricing">
                 <a className={s.link}>Pricing</a>
               </Link> : ''}

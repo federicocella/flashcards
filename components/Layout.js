@@ -7,7 +7,7 @@ import Footer from '@/components/ui/Footer';
 export default function Layout({ children, meta: pageMeta, footer }) {
   const router = useRouter();
   const meta = {
-    title: 'Flashcards',
+    title: 'Flashdex',
     description: 'The easiest way to embed 360° product pictures in your website',
     cardImage: '/og.png',
     ...pageMeta

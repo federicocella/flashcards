@@ -41,7 +41,7 @@ export default function LandingPage() {
     <div>
       <div className="px-3 flex flex-wrap flex-col py-16 md:pt-16 md:flex-row items-center justify-center">
         <div className="flex flex-col w-full justify-center text-center md:w-2/5 md:text-left">
-          <h1 className="my-4 text-5xl text-primary font-extrabold leading-tight text-center">Add 360˚<br />interactive views<br />in minutes</h1>
+          <h1 className="my-4 text-6xl text-primary font-extrabold leading-tight">Memorize anything</h1>
           <p className="leading-normal text-xl text-accents-3 mb-8 text-center">Integrate 360 views of your products into your website.</p>
           <a href="/pricing" className="inline-block self-center text-center mx-auto lg:mx-0 hover:underline bg-primary text-secondary font-bold rounded-full mt-4 lg:mt-0 py-4 px-8 shadow z-10">Sign Up!</a>
         </div>
@@ -94,7 +94,7 @@ export default function LandingPage() {
           <div className="w-full sm:w-1/2 p-6 mt-6 flex">
             <div className="align-middle">
               <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">A Better Way</h3>
-              <p className="text-lg text-gray-600 mb-8">Flashcards offers a plug-and-play solution to embed 360 views of your products – or anything else for that matter – on your website.<br /><br />
+              <p className="text-lg text-gray-600 mb-8">Flashdex offers a plug-and-play solution to embed 360 views of your products – or anything else for that matter – on your website.<br /><br />
               </p>
 
             </div>
@@ -104,7 +104,7 @@ export default function LandingPage() {
         <div className="flex flex-wrap">
           <div className="w-5/6 sm:w-1/2 p-6">
             <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3 mt-6">Upload and embed. Done.</h3>
-            <p className="text-lg text-gray-600 mb-8">Flashcards takes care of all the heavy lifting surrounding file uploads.The widget hooks into an input with class of simple-file-upload and replaces it with a dropzone.The user drops a file and the file is automatically uploaded to cloud storage via a direct upload.Files are served via a CDN which is imperitive in today's modern megabyte-sized website world. <br /><br />
+            <p className="text-lg text-gray-600 mb-8">Flashdex takes care of all the heavy lifting surrounding file uploads.The widget hooks into an input with class of simple-file-upload and replaces it with a dropzone.The user drops a file and the file is automatically uploaded to cloud storage via a direct upload.Files are served via a CDN which is imperitive in today's modern megabyte-sized website world. <br /><br />
             </p></div>
           <div className="w-full sm:w-1/2 p-6">
             <img className="w-5/6 sm:h-64 mx-auto mt-6" src="https://d33wubrfki0l68.cloudfront.net/9475b01d7e8f54ea97bf17911c0882e6a89c32ee/ff7af/assets/server.svg" />
@@ -118,7 +118,7 @@ export default function LandingPage() {
           <div className="w-full sm:w-1/2 p-6 mt-6">
             <div className="align-middle">
               <h3 className="text-3xl text-gray-800 font-bold leading-none mb-3">Will it work for me?</h3>
-              <p className="text-lg text-gray-600 mb-8">Yes! It can work with all kinds of languages and backends. Flashcards can be embedded into any HTML using an iframe or via a javascript snippet or React component.<br /><br />
+              <p className="text-lg text-gray-600 mb-8">Yes! It can work with all kinds of languages and backends. Flashdex can be embedded into any HTML using an iframe or via a javascript snippet or React component.<br /><br />
               </p></div>
           </div>
         </div>

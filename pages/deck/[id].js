@@ -101,7 +101,7 @@ export default function DeckPage() {
                     {loading ? <div className='w-16 pt-16 mx-auto'><LoadingDots /></div> :
                         <div className='max-w-screen-md m-auto my-8 min-h-screen'>
                             <div className='flex items-center mb-4'>
-                                <div className='text-lg font-semibold flex-grow'>{deck.name}</div>
+                                <div className='text-2xl font-bold flex-grow'>{deck.name}</div>
                                 <div>
                                     <Button variant='slim' onClick={() => { setMode('review') }}>Review</Button>
                                 </div>
@@ -119,13 +119,14 @@ export default function DeckPage() {
                         <div>
                             <div className='max-w-screen-md m-auto my-8 min-h-screen'>
                                 <div className='flex items-center mb-4'>
-                                    <div className='text-lg font-semibold flex-grow'>{deck ? deck.name : 'Untitled'}</div>
+                                    <div className='text-2xl font-bold flex-grow'>{deck ? deck.name : 'Untitled'}</div>
                                     <div>
                                         <Button variant='slim' onClick={() => { setMode('review') }}>Review</Button>
                                     </div>
                                 </div>
+                                <h3 className="font-semibold text-lg mb-4 mt-8">To learn</h3>
                                 <div className='space-y-2'>{flashcards ?
-                                    flashcards.map((flashcard, i) => (
+                                    flashcards.filter(el => !el.learned).map((flashcard, i) => (
                                         <div>
                                             <div className="flex bg-white py-4 px-6 rounded-lg filter drop-shadow-sm">
                                                 <div className='flex-grow'>
@@ -137,7 +138,7 @@ export default function DeckPage() {
                                             </div>
                                         </div>
                                     ))
-                                    : 'This deck doesn\'t contain any flashcards'}
+                                    : 'Nothing to learn.'}
                                     <div onClick={() => { setIsModalOpen(true) }} className="cursor-pointer flex justify-center hover:bg-gray-100 py-4 px-6 rounded-lg border-2 border-dashed border-gray-200">
                                         Add card
                                     </div>
@@ -173,6 +174,22 @@ export default function DeckPage() {
                                         </div>
                                     </PoplarModal>
                                 </div>
+                                <h3 className="font-semibold text-lg mb-4 mt-8">Already learned</h3>
+                                <div className='space-y-2'>{flashcards ?
+                                    flashcards.filter(el => el.learned).map((flashcard, i) => (
+                                        <div>
+                                            <div className="flex bg-white py-4 px-6 rounded-lg filter drop-shadow-sm">
+                                                <div className='flex-grow'>
+                                                    {flashcard.front}
+                                                </div>
+                                                <div className=''>
+                                                    {flashcard.back}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                    : ''}
+                                </div>
                             </div>
                         </div>
                     }
@@ -183,7 +200,8 @@ export default function DeckPage() {
 
 function Review({ flashcards }) {
     let [flipped, setFlipped] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    let [currentIndex, setCurrentIndex] = useState(0);
+    let [learned, setLearned] = useState(false);
 
     async function updateFlashcard(card, i, arr) {
         const { data, error } = await supabase.from('flashcards').update({
@@ -193,7 +211,7 @@ function Review({ flashcards }) {
             learned: true
         }).match({ id: card.id })
         if (data & !error) {
-            arr[i].learned = true;
+            setLearned(true);
         }
     }
 
@@ -206,10 +224,11 @@ function Review({ flashcards }) {
             <div className="mt-4 flex justify-center space-x-2">
                 <Button variant="slim" type="neutral">←</Button>
                 <Button variant="slim" onClick={() => { setFlipped(true) }}>Flip</Button>
-                <Button variant="slim" disabled={flashcards[currentIndex].learned} type="neutral" onClick={() => { updateFlashcard(flashcards[currentIndex], currentIndex, flashcards) }}>Mark as learned</Button>
+                <Button variant="slim" disabled={learned} type="neutral" onClick={() => { updateFlashcard(flashcards[currentIndex], currentIndex, flashcards) }}>Mark as learned</Button>
                 <Button variant="slim" type="neutral" onClick={() => {
                     setCurrentIndex(Math.floor(Math.random() * flashcards.length))
                     setFlipped(false)
+                    setLearned(false)
                 }}>→</Button>
             </div>
         </div >

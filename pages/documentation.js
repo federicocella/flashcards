@@ -17,7 +17,7 @@ export default function DocumentationPage() {
                     <div className="flex flex-wrap justify-center">
 
                         <div className="p-4">
-                            <p className="text-lg leading-normal mb-8">Flashcards is the easiest way to upload your 360 degrees picture of a product, host them and embed them in any of your websites.</p>
+                            <p className="text-lg leading-normal mb-8">Flashdex is the easiest way to upload your 360 degrees picture of a product, host them and embed them in any of your websites.</p>
                             <p className="text-lg leading-normal mb-8">It's super easy to use. Just drop your images and use the iframe to embed them in your website HTML.</p>
                             <div className="text-white bg-gray-700 p-5 rounded-xl">
 
@@ -30,7 +30,7 @@ export default function DocumentationPage() {
                     </div>
                     <div className="flex flex-wrap justify-center">
                         <div className="p-4 my-8">
-                            <h2 className="text-3xl font-bold text-center mb-4">How to use Flashcards</h2>
+                            <h2 className="text-3xl font-bold text-center mb-4">How to use Flashdex</h2>
                             <p className="text-lg leading-normal mb-4">For now only the embed via iframe is supported. But you can use it on any kind of websites.</p>
                             <ol className='text-lg'>
                                 <li>1. Log in. Via magic link to your email or with your Google account.</li>
@@ -44,7 +44,7 @@ export default function DocumentationPage() {
                             <h2 className="text-3xl font-bold text-center mb-4">FAQ</h2>
                             <details className="flex flex-wrap justify-center">
                                 <summary>
-                                    <h2 className="text-3xl font-bold text-center mb-4">What is Flashcards?</h2>
+                                    <h2 className="text-3xl font-bold text-center mb-4">What is Flashdex?</h2>
                                 </summary>
                                 <p className="text-lg leading-normal mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                             </details>

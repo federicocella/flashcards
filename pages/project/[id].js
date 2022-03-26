@@ -83,7 +83,7 @@ export default function DeckPage() {
                     <div className='fixed flex items-center top-0 w-full text-md px-4 pl-8 h-16 bg-white border-b border-gray-200 font-bold'>
                         <Link href="/">
                             <a className="text-xl font-extrabold text-accents-0" aria-label="Logo">
-                                Flashcards
+                                Flashdex
                             </a>
                         </Link>
                         <div className="ml-8 flex-grow ">{project ? project.name : ''}</div>

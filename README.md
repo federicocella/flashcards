@@ -1,4 +1,4 @@
-# Flashcards
+# Flashdex
 
 The all-in-one solution for creating and embedding 360 degrees product views.
 

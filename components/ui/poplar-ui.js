@@ -55,7 +55,7 @@ export function PoplarModal({ title, show, onClose, children }) {
         setIsBrowser(true);
     }, []);
 
-    if (isBrowser) {
+    if (isBrowser && document.getElementById("modal-root")) {
         return ReactDOM.createPortal(
             modalContent,
             document.getElementById("modal-root")
@@ -63,4 +63,8 @@ export function PoplarModal({ title, show, onClose, children }) {
     } else {
         return null;
     }
+}
+
+export function PoplarLabel({ children }) {
+    return <div className="mb-1 font-medium">{children}</div>
 }
