@@ -202,6 +202,7 @@ function Review({ flashcards }) {
     let [flipped, setFlipped] = useState(false);
     let [currentIndex, setCurrentIndex] = useState(0);
     let [learned, setLearned] = useState(false);
+    let [remaining, setRemaining] = useState(flashcards);
 
     async function updateFlashcard(card, i, arr) {
         const { data, error } = await supabase.from('flashcards').update({
@@ -210,23 +211,24 @@ function Review({ flashcards }) {
             deck_id: card.deck_id,
             learned: true
         }).match({ id: card.id })
-        if (data & !error) {
-            setLearned(true);
+        if (data) {
+            console.log(data);
+            setRemaining(remaining.filter(el => el.front != card.front));
         }
     }
 
     return (
         <div>
             <div className="bg-white w-full h-96 flex flex-col items-center justify-center rounded-xl filter drop-shadow-sm divide-y">
-                <div className="py-4 font-bold text-4xl">{flashcards[currentIndex].front}</div>
-                {flipped ? <div className="py-4 font-medium text-2xl">{flashcards[currentIndex].back}</div> : ''}
+                <div className="py-4 font-bold text-4xl">{remaining[currentIndex].front}</div>
+                {flipped ? <div className="py-4 font-medium text-2xl">{remaining[currentIndex].back}</div> : ''}
             </div>
             <div className="mt-4 flex justify-center space-x-2">
                 <Button variant="slim" type="neutral">←</Button>
                 <Button variant="slim" onClick={() => { setFlipped(true) }}>Flip</Button>
-                <Button variant="slim" disabled={learned} type="neutral" onClick={() => { updateFlashcard(flashcards[currentIndex], currentIndex, flashcards) }}>Mark as learned</Button>
+                <Button variant="slim" disabled={learned} type="neutral" onClick={() => { updateFlashcard(remaining[currentIndex], currentIndex, remaining) }}>Mark as learned</Button>
                 <Button variant="slim" type="neutral" onClick={() => {
-                    setCurrentIndex(Math.floor(Math.random() * flashcards.length))
+                    setCurrentIndex(Math.floor(Math.random() * remaining.length))
                     setFlipped(false)
                     setLearned(false)
                 }}>→</Button>

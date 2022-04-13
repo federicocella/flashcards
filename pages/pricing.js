@@ -6,8 +6,8 @@ export default function PricingPage({ products }) {
   return <Pricing products={products} />
 }
 
-export async function getStaticProps() {
-  const products // = await getActiveProductsWithPrices();
+/*export async function getStaticProps() {
+  const products = await getActiveProductsWithPrices();
 
   return {
     props: {
@@ -15,4 +15,4 @@ export async function getStaticProps() {
     },
     revalidate: 60
   };
-}
+}*/
